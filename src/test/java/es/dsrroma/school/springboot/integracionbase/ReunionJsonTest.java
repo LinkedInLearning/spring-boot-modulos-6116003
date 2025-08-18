@@ -3,6 +3,7 @@ package es.dsrroma.school.springboot.integracionbase;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -24,7 +25,7 @@ class ReunionJsonTest {
 	private static final String ASUNTO_NAVIDAD = "Reunión Navidad";
 	private static final String ASUNTO_AYER = "Reunión ayer";
 	private static final String ASUNTO_MANANA = "Reunión mañana";
-	private static final ZonedDateTime FECHA_NAVIDAD = ZonedDateTime.of(2025, 12, 25, 13, 0, 0, 0, ZoneId.systemDefault());
+	private static final Instant FECHA_NAVIDAD = ZonedDateTime.of(2025, 12, 25, 13, 0, 0, 0, ZoneId.systemDefault()).toInstant();
 
 	@Autowired
 	private JacksonTester<Reunion> json;
@@ -62,12 +63,12 @@ class ReunionJsonTest {
                 {
                     "id": 99,
                     "asunto": "Reunión Navidad", 
-                    "fecha": "2025-12-25T12:00Z"
+                    "fecha": "2025-12-25T13:00:00+01:00"
                 }
                 """;
-        assertThat(json.parseObject(expected).id()).isEqualTo(99L);
-        assertThat(json.parseObject(expected).asunto()).isEqualTo(ASUNTO_NAVIDAD);
-        assertThat(json.parseObject(expected).fecha()).isEqualTo(FECHA_NAVIDAD);
+        assertThat(json.parseObject(expected).getId()).isEqualTo(99L);
+        assertThat(json.parseObject(expected).getAsunto()).isEqualTo(ASUNTO_NAVIDAD);
+        assertThat(json.parseObject(expected).getFecha()).isEqualTo(FECHA_NAVIDAD);
     }
 
     @Test

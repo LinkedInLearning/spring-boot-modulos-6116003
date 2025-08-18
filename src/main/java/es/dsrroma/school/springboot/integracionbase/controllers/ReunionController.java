@@ -60,7 +60,7 @@ public class ReunionController {
 			UriComponentsBuilder ucb) {
 		Reunion savedReunion = reunionRepository.save(newReunionRequest);
 		URI locationOfNewReunion = 
-				ucb.path("reuniones/{id}").buildAndExpand(savedReunion.id()).toUri();
+				ucb.path("reuniones/{id}").buildAndExpand(savedReunion.getId()).toUri();
 		return ResponseEntity.created(locationOfNewReunion).build();
 	}
 
@@ -69,8 +69,8 @@ public class ReunionController {
 			@RequestBody Reunion reunionUpdate) {
 		Optional<Reunion> reunion = reunionRepository.findById(requestedId);
 		if (reunion.isPresent()) {
-			Reunion updatedReunion = new Reunion(reunion.get().id(), 
-					reunionUpdate.asunto(), reunionUpdate.fecha());
+			Reunion updatedReunion = new Reunion(reunion.get().getId(), 
+					reunionUpdate.getAsunto(), reunionUpdate.getFecha());
 			reunionRepository.save(updatedReunion);
 			return ResponseEntity.noContent().build();
 		} else {
