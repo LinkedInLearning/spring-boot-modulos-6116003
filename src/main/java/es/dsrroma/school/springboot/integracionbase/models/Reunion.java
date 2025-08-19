@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -37,6 +39,11 @@ public class Reunion {
 	private Acta acta;
 
     @ManyToMany
+    @JoinTable(
+            name = "participaciones", // Nombre de la tabla intermedia
+            joinColumns = @JoinColumn(name = "idParticipante"),
+            inverseJoinColumns = @JoinColumn(name = "idReunion")
+        )
     private Set<Persona> participantes;
 
 }
