@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://dsr:xxxxxxxxxxxxxxxx@cluster0.xxxxxxx.mongodb.net/reuniones?retryWrites=true&w=majority&appName=Cluster0
+      database: reuniones
+      repostories:
+        enabled: true

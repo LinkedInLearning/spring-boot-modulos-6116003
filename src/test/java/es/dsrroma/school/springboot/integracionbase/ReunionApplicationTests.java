@@ -27,9 +27,9 @@ import net.minidev.json.JSONArray;
 class ReunionApplicationTests {
 
 	private static final String NUEVO_ASUNTO = "Nuevo Asunto";
-	private static final long ID_NAVIDAD = 99L;
-	private static final long ID_AYER = 100L;
-	private static final long ID_MANANA = 101L;
+	private static final String ID_NAVIDAD = "99L";
+	private static final String ID_AYER = "100L";
+	private static final String ID_MANANA = "101L";
 	private static final String ASUNTO_NAVIDAD = "Reunión Navidad";
 	private static final String ASUNTO_AYER = "Reunión ayer";
 	private static final String ASUNTO_MANANA = "Reunión mañana";
@@ -98,7 +98,7 @@ class ReunionApplicationTests {
         assertThat(reunionCount).isEqualTo(3);
 
         JSONArray ids = documentContext.read("$..id");
-        assertThat(ids).containsExactlyInAnyOrder((int) ID_NAVIDAD, (int) ID_AYER, (int) ID_MANANA);
+        assertThat(ids).containsExactlyInAnyOrder(ID_NAVIDAD, ID_AYER, ID_MANANA);
 
         JSONArray asuntos = documentContext.read("$..asunto");
         assertThat(asuntos).containsExactlyInAnyOrder(ASUNTO_NAVIDAD, ASUNTO_AYER, ASUNTO_MANANA);
