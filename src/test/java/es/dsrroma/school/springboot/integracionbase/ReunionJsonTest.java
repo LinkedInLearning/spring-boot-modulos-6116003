@@ -19,9 +19,9 @@ import es.dsrroma.school.springboot.integracionbase.models.Reunion;
 @JsonTest
 class ReunionJsonTest {
 
-	private static final String ID_NAVIDAD = "99L";
-	private static final String ID_AYER = "100L";
-	private static final String ID_MANANA = "101L";
+	private static final long ID_NAVIDAD = 99L;
+	private static final long ID_AYER = 100L;
+	private static final long ID_MANANA = 101L;
 	private static final String ASUNTO_NAVIDAD = "Reunión Navidad";
 	private static final String ASUNTO_AYER = "Reunión ayer";
 	private static final String ASUNTO_MANANA = "Reunión mañana";
@@ -49,9 +49,9 @@ class ReunionJsonTest {
     @Test
     void testSerializacionReunion() throws IOException {
         assertThat(json.write(reunion)).isStrictlyEqualToJson("single.json");
-        assertThat(json.write(reunion)).hasJsonPathStringValue("@.id");
-        assertThat(json.write(reunion)).extractingJsonPathStringValue("@.id")
-                .isEqualTo(ID_NAVIDAD);
+        assertThat(json.write(reunion)).hasJsonPathNumberValue("@.id");
+        assertThat(json.write(reunion)).extractingJsonPathNumberValue("@.id")
+                .isEqualTo((int)ID_NAVIDAD);
         assertThat(json.write(reunion)).hasJsonPathStringValue("@.asunto");
         assertThat(json.write(reunion)).extractingJsonPathStringValue("@.asunto")
                 .isEqualTo(ASUNTO_NAVIDAD);

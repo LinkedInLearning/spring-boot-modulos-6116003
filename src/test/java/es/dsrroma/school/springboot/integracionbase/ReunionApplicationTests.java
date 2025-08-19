@@ -27,9 +27,9 @@ import net.minidev.json.JSONArray;
 class ReunionApplicationTests {
 
 	private static final String NUEVO_ASUNTO = "Nuevo Asunto";
-	private static final String ID_NAVIDAD = "99L";
-	private static final String ID_AYER = "100L";
-	private static final String ID_MANANA = "101L";
+	private static final long ID_NAVIDAD = 99L;
+	private static final long ID_AYER = 100L;
+	private static final long ID_MANANA = 101L;
 	private static final String ASUNTO_NAVIDAD = "Reunión Navidad";
 	private static final String ASUNTO_AYER = "Reunión ayer";
 	private static final String ASUNTO_MANANA = "Reunión mañana";
