@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,4 +30,7 @@ public class Reunion {
 
 	@ManyToOne
 	private Sala sala;
+	
+	@OneToOne
+	private Acta acta;
 }
