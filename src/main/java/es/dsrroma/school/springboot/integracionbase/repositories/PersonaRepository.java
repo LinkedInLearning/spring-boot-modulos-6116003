@@ -1,9 +1,9 @@
 package es.dsrroma.school.springboot.integracionbase.repositories;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import es.dsrroma.school.springboot.integracionbase.models.Persona;
 
-public interface PersonaRepository extends CrudRepository<Persona, Long> {
+public interface PersonaRepository extends JpaRepository<Persona, Long> {
 
 }
