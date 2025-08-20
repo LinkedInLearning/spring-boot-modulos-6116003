@@ -90,8 +90,19 @@ public class SalaController {
 	}
 	
 	@GetMapping("/para/{num}")
-	private ResponseEntity<Iterable<SalaDTO>> findAdecuadas(int num) {
+	private ResponseEntity<Iterable<SalaDTO>> findPara(int num) {
 		Iterable<Sala> salas = salaRepository.findByCapacidadGreaterThanEqual(num);
+
+		List<SalaDTO> dtos = StreamSupport.stream(salas.spliterator(), false)
+				.map(SalaMapper::toDTO)
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok(dtos);
+	}
+	
+	@GetMapping("/adecuada/{num}")
+	private ResponseEntity<Iterable<SalaDTO>> findAdecuadas(int num) {
+		Iterable<Sala> salas = salaRepository.findByCapadidadBetween(num, num * 2);
 
 		List<SalaDTO> dtos = StreamSupport.stream(salas.spliterator(), false)
 				.map(SalaMapper::toDTO)
