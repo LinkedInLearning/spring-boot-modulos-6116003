@@ -88,4 +88,15 @@ public class SalaController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+	@GetMapping("/para/{num}")
+	private ResponseEntity<Iterable<SalaDTO>> findAdecuadas(int num) {
+		Iterable<Sala> salas = salaRepository.findByCapacidadGreaterThanEqual(num);
+
+		List<SalaDTO> dtos = StreamSupport.stream(salas.spliterator(), false)
+				.map(SalaMapper::toDTO)
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok(dtos);
+	}
 }
