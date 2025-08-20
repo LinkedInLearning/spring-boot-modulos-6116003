@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.PersonaDTO;
-import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 import es.dsrroma.school.springboot.integracionbase.services.PersonaService;
 import jakarta.validation.Valid;
 
@@ -30,8 +29,7 @@ public class PersonaController {
 	}
 
 	@GetMapping("/{requestedId}")
-	private ResponseEntity<PersonaDTO> findById(@PathVariable Long requestedId) 
-			throws EntityNotFoundException {
+	private ResponseEntity<PersonaDTO> findById(@PathVariable Long requestedId) {
 		PersonaDTO personaDTO = personaService.findPersonaById(requestedId);
 		return ResponseEntity.ok(personaDTO);
 	}
@@ -53,13 +51,13 @@ public class PersonaController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putPersona(@PathVariable Long requestedId,
-			@Valid @RequestBody PersonaDTO personaUpdate) throws EntityNotFoundException {
+			@Valid @RequestBody PersonaDTO personaUpdate) {
 		personaService.updatePersona(requestedId, personaUpdate);
 		return ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
-	private ResponseEntity<Void> deletePersona(@PathVariable Long id) throws EntityNotFoundException {
+	private ResponseEntity<Void> deletePersona(@PathVariable Long id) {
 		personaService.deletePersona(id);
 		return ResponseEntity.notFound().build();
 	}

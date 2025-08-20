@@ -23,7 +23,7 @@ public class ActaServiceImpl implements ActaService {
 	}
 
 	@Override
-	public ActaDTO findActaById(Long requestedId) throws EntityNotFoundException {
+	public ActaDTO findActaById(Long requestedId) {
 		Acta acta = actaRepository.findById(requestedId)
 				.orElseThrow(() -> new EntityNotFoundException("Acta", requestedId));
 		return ActaMapper.toDTO(acta);
@@ -44,7 +44,7 @@ public class ActaServiceImpl implements ActaService {
 	}
 
 	@Override
-	public ActaDTO updateActa(Long requestedId, ActaDTO actaUpdate) throws EntityNotFoundException {
+	public ActaDTO updateActa(Long requestedId, ActaDTO actaUpdate) {
 		Acta acta = actaRepository.findById(requestedId)
 				.orElseThrow(() -> new EntityNotFoundException("Acta", requestedId));
 		acta.setContenido(actaUpdate.getContenido());
@@ -53,7 +53,7 @@ public class ActaServiceImpl implements ActaService {
 	}
 
 	@Override
-	public void deleteActa(Long id) throws EntityNotFoundException {
+	public void deleteActa(Long id) {
 		if (!actaRepository.existsById(id)) {
 			throw new EntityNotFoundException("Acta", id);
 		}

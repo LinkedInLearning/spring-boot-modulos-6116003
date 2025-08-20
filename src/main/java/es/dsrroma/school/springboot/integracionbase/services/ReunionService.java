@@ -7,11 +7,10 @@ import org.springframework.data.domain.Pageable;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.ActaDTO;
 import es.dsrroma.school.springboot.integracionbase.dtos.ReunionDTO;
-import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 
 public interface ReunionService {
 
-	ReunionDTO findReunionById(Long requestedId) throws EntityNotFoundException;
+	ReunionDTO findReunionById(Long requestedId);
 
 	List<ReunionDTO> findAllReuniones();
 
@@ -19,15 +18,15 @@ public interface ReunionService {
 
 	List<ReunionDTO> findAllReuniones2(Pageable pageable);
 
-	ReunionDTO createReunion(ReunionDTO newReunionRequest) throws EntityNotFoundException;
+	ReunionDTO createReunion(ReunionDTO newReunionRequest);
 
-	ReunionDTO updateReunion(Long requestedId, ReunionDTO reunionUpdate) throws EntityNotFoundException;
+	ReunionDTO updateReunion(Long requestedId, ReunionDTO reunionUpdate);
 
-	void deleteReunion(Long id) throws EntityNotFoundException;
+	void deleteReunion(Long id);
 
-	void addSalaToReunion(Long reunionId, String salaId) throws EntityNotFoundException;
+	void addSalaToReunion(Long reunionId, String salaId);
 
-	void addActaToReunion(Long reunionId, ActaDTO actaRequest) throws EntityNotFoundException;
+	void addActaToReunion(Long reunionId, ActaDTO actaRequest);
 
-	void addParticipantes(Long reunionId, Set<Long> participantesIds) throws EntityNotFoundException;
+	void addParticipantes(Long reunionId, Set<Long> participantesIds);
 }

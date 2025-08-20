@@ -24,7 +24,7 @@ public class SalaServiceImpl implements SalaService {
 	}
 
 	@Override
-	public SalaDTO findSalaById(String requestedId) throws EntityNotFoundException {
+	public SalaDTO findSalaById(String requestedId) {
 		Optional<Sala> salaOpt = salaRepository.findById(requestedId);
 		return salaOpt.map(SalaMapper::toDTO).orElseThrow(() 
 				-> new EntityNotFoundException("Sala", requestedId));
@@ -45,7 +45,7 @@ public class SalaServiceImpl implements SalaService {
 	}
 
 	@Override
-	public SalaDTO updateSala(String requestedId, SalaDTO salaUpdate) throws EntityNotFoundException {
+	public SalaDTO updateSala(String requestedId, SalaDTO salaUpdate) {
 		Sala updatedSala = salaRepository.findById(requestedId)
 				.orElseThrow(() -> new EntityNotFoundException("Sala", requestedId));
 		updatedSala.setDescripcion(salaUpdate.getDescripcion());
@@ -55,7 +55,7 @@ public class SalaServiceImpl implements SalaService {
 	}
 
 	@Override
-	public void deleteSala(String id) throws EntityNotFoundException {
+	public void deleteSala(String id) {
 		if (!salaRepository.existsById(id)) {
 			throw new EntityNotFoundException("Sala", id);
 		}

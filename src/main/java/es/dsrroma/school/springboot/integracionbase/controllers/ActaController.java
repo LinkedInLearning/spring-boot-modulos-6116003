@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.ActaDTO;
-import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 import es.dsrroma.school.springboot.integracionbase.services.ActaService;
 import jakarta.validation.Valid;
 
@@ -30,8 +29,7 @@ public class ActaController {
     }
 
     @GetMapping("/{requestedId}")
-    private ResponseEntity<ActaDTO> findById(@PathVariable Long requestedId) 
-    		throws EntityNotFoundException {
+    private ResponseEntity<ActaDTO> findById(@PathVariable Long requestedId) {
         ActaDTO actaDTO = actaService.findActaById(requestedId);
         return ResponseEntity.ok(actaDTO);
     }
@@ -52,13 +50,13 @@ public class ActaController {
 
     @PutMapping("/{requestedId}")
     private ResponseEntity<Void> putActa(@PathVariable Long requestedId, 
-    		@Valid @RequestBody ActaDTO actaUpdate) throws EntityNotFoundException {
+    		@Valid @RequestBody ActaDTO actaUpdate) {
         actaService.updateActa(requestedId, actaUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<Void> deleteActa(@PathVariable Long id) throws EntityNotFoundException {
+    private ResponseEntity<Void> deleteActa(@PathVariable Long id) {
         actaService.deleteActa(id);
         return ResponseEntity.noContent().build();
     }

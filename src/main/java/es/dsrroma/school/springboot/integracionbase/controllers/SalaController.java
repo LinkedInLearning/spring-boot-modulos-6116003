@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.SalaDTO;
-import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 import es.dsrroma.school.springboot.integracionbase.services.SalaService;
 import jakarta.validation.Valid;
 
@@ -30,8 +29,7 @@ public class SalaController {
 	}
 
 	@GetMapping("/{requestedId}")
-	private ResponseEntity<SalaDTO> findById(@PathVariable String requestedId) 
-			throws EntityNotFoundException {
+	private ResponseEntity<SalaDTO> findById(@PathVariable String requestedId) {
 		SalaDTO salaDTO = salaService.findSalaById(requestedId);
 		return ResponseEntity.ok(salaDTO);
 	}
@@ -52,13 +50,13 @@ public class SalaController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putSala(@PathVariable String requestedId, 
-			@Valid @RequestBody SalaDTO salaUpdate) throws EntityNotFoundException {
+			@Valid @RequestBody SalaDTO salaUpdate) {
 		salaService.updateSala(requestedId, salaUpdate);
 		return ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
-	private ResponseEntity<Void> deleteSala(@PathVariable String id) throws EntityNotFoundException {
+	private ResponseEntity<Void> deleteSala(@PathVariable String id) {
 		salaService.deleteSala(id);
 		return ResponseEntity.notFound().build();
 	}

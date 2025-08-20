@@ -23,7 +23,7 @@ public class PersonaServiceImpl implements PersonaService {
 	}
 
 	@Override
-	public PersonaDTO findPersonaById(Long requestedId) throws EntityNotFoundException {
+	public PersonaDTO findPersonaById(Long requestedId) {
 		Persona persona = personaRepository.findById(requestedId)
 				.orElseThrow(() -> new EntityNotFoundException("Persona", requestedId));
 		return PersonaMapper.toDTO(persona);
@@ -44,8 +44,7 @@ public class PersonaServiceImpl implements PersonaService {
 	}
 
 	@Override
-	public PersonaDTO updatePersona(Long requestedId, PersonaDTO personaUpdate) 
-			throws EntityNotFoundException {
+	public PersonaDTO updatePersona(Long requestedId, PersonaDTO personaUpdate) {
 		Persona persona = personaRepository.findById(requestedId)
 				.orElseThrow(() -> new EntityNotFoundException("Persona", requestedId));
 		persona.setNumeroEmpleado(personaUpdate.getNumeroEmpleado());
@@ -56,7 +55,7 @@ public class PersonaServiceImpl implements PersonaService {
 	}
 
 	@Override
-    public void deletePersona(Long id) throws EntityNotFoundException {
+    public void deletePersona(Long id) {
         if (!personaRepository.existsById(id)) {
             throw new EntityNotFoundException("Persona", id);
         }

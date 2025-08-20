@@ -24,6 +24,7 @@ import es.dsrroma.school.springboot.integracionbase.repositories.PersonaReposito
 import es.dsrroma.school.springboot.integracionbase.repositories.ReunionRepository;
 import es.dsrroma.school.springboot.integracionbase.repositories.SalaRepository;
 import es.dsrroma.school.springboot.integracionbase.services.ReunionService;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ReunionServiceImpl implements ReunionService {
@@ -42,7 +43,7 @@ public class ReunionServiceImpl implements ReunionService {
 	}
 
 	@Override
-	public ReunionDTO findReunionById(Long requestedId) throws EntityNotFoundException {
+	public ReunionDTO findReunionById(Long requestedId) {
 		Reunion reunion = reunionRepository.findById(requestedId)
 				.orElseThrow(() -> new EntityNotFoundException("Reunion", requestedId));
 		return ReunionMapper.toDTO(reunion);
@@ -72,7 +73,8 @@ public class ReunionServiceImpl implements ReunionService {
 	}
 
 	@Override
-	public ReunionDTO createReunion(ReunionDTO newReunionRequest) throws EntityNotFoundException {
+	@Transactional
+	public ReunionDTO createReunion(ReunionDTO newReunionRequest) {
 		Reunion reunion = ReunionMapper.toEntity(newReunionRequest);
 
 		// Cargar Acta
@@ -104,8 +106,7 @@ public class ReunionServiceImpl implements ReunionService {
 	}
 
 	@Override
-	public ReunionDTO updateReunion(Long requestedId, ReunionDTO reunionUpdate) 
-			throws EntityNotFoundException {
+	public ReunionDTO updateReunion(Long requestedId, ReunionDTO reunionUpdate) {
 		Reunion reunion = reunionRepository.findById(requestedId)
 				.orElseThrow(() -> new EntityNotFoundException("Reunion", requestedId));
 
@@ -117,7 +118,7 @@ public class ReunionServiceImpl implements ReunionService {
 	}
 
 	@Override
-	public void deleteReunion(Long id) throws EntityNotFoundException {
+	public void deleteReunion(Long id) {
 		if (!reunionRepository.existsById(id)) {
 			throw new EntityNotFoundException("Reunion", id);
 		}
@@ -125,7 +126,7 @@ public class ReunionServiceImpl implements ReunionService {
 	}
 
 	@Override
-	public void addSalaToReunion(Long reunionId, String salaId) throws EntityNotFoundException {
+	public void addSalaToReunion(Long reunionId, String salaId) {
 		Reunion reunion = reunionRepository.findById(reunionId)
 				.orElseThrow(() -> new EntityNotFoundException("Reunion", reunionId));
 
@@ -137,7 +138,7 @@ public class ReunionServiceImpl implements ReunionService {
 	}
 
 	@Override
-	public void addActaToReunion(Long reunionId, ActaDTO actaRequest) throws EntityNotFoundException {
+	public void addActaToReunion(Long reunionId, ActaDTO actaRequest) {
 		Reunion reunion = reunionRepository.findById(reunionId)
 				.orElseThrow(() -> new EntityNotFoundException("Reunion", reunionId));
 
@@ -157,8 +158,7 @@ public class ReunionServiceImpl implements ReunionService {
 	}
 
 	@Override
-	public void addParticipantes(Long reunionId, Set<Long> participantesIds) 
-			throws EntityNotFoundException {
+	public void addParticipantes(Long reunionId, Set<Long> participantesIds) {
 		Reunion reunion = reunionRepository.findById(reunionId)
 				.orElseThrow(() -> new EntityNotFoundException("Reunion", reunionId));
 
@@ -168,8 +168,7 @@ public class ReunionServiceImpl implements ReunionService {
 		reunionRepository.save(reunion);
 	}
 
-	private Set<Persona> preparaParticipantes(Set<Long> participantesIds) 
-			throws EntityNotFoundException {
+	private Set<Persona> preparaParticipantes(Set<Long> participantesIds) {
 		final List<Long> idsFallidos = new ArrayList<>();
 		Set<Persona> participantes = participantesIds.stream().map(personaId -> {
 			return personaRepository.findById(personaId).orElseGet(() -> {

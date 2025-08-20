@@ -18,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.ActaDTO;
 import es.dsrroma.school.springboot.integracionbase.dtos.ReunionDTO;
-import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 import es.dsrroma.school.springboot.integracionbase.services.ReunionService;
 import jakarta.validation.Valid;
 
@@ -33,8 +32,7 @@ public class ReunionController {
 	}
 
 	@GetMapping("/{requestedId}")
-	private ResponseEntity<ReunionDTO> findById(@PathVariable Long requestedId) 
-			throws EntityNotFoundException {
+	private ResponseEntity<ReunionDTO> findById(@PathVariable Long requestedId) {
 		ReunionDTO reunionDTO = reunionService.findReunionById(requestedId);
 		return ResponseEntity.ok(reunionDTO);
 	}
@@ -57,7 +55,7 @@ public class ReunionController {
 
 	@PostMapping
 	private ResponseEntity<Void> createReunion(@Valid @RequestBody ReunionDTO newReunionRequest,
-			UriComponentsBuilder ucb) throws EntityNotFoundException {
+			UriComponentsBuilder ucb) {
 		ReunionDTO savedReunion = reunionService.createReunion(newReunionRequest);
 		URI locationOfNewReunion = ucb.path("reuniones/{id}")
 				.buildAndExpand(savedReunion.getId()).toUri();
@@ -66,35 +64,34 @@ public class ReunionController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putReunion(@PathVariable Long requestedId,
-			@Valid @RequestBody ReunionDTO reunionUpdate) throws EntityNotFoundException {
+			@Valid @RequestBody ReunionDTO reunionUpdate) {
 		reunionService.updateReunion(requestedId, reunionUpdate);
 		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping("/{id}")
-	private ResponseEntity<Void> deleteReunion(@PathVariable Long id) 
-			throws EntityNotFoundException {
+	private ResponseEntity<Void> deleteReunion(@PathVariable Long id) {
 		reunionService.deleteReunion(id);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping("/{reunionId}/sala/{salaId}")
 	public ResponseEntity<Void> addSalaToReunion(@PathVariable Long reunionId, 
-			@PathVariable String salaId) throws EntityNotFoundException {
+			@PathVariable String salaId) {
 		reunionService.addSalaToReunion(reunionId, salaId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping("/{reunionId}/acta")
 	public ResponseEntity<Void> addActaToReunion(@PathVariable Long reunionId, 
-			@Valid @RequestBody ActaDTO actaRequest) throws EntityNotFoundException {
+			@Valid @RequestBody ActaDTO actaRequest) {
 		reunionService.addActaToReunion(reunionId, actaRequest);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping("/{reunionId}/participantes")
 	public ResponseEntity<Void> addParticipantes(@PathVariable Long reunionId,
-			@Valid @RequestBody Set<Long> participantesIds) throws EntityNotFoundException {
+			@Valid @RequestBody Set<Long> participantesIds) {
 		reunionService.addParticipantes(reunionId, participantesIds);
 		return ResponseEntity.noContent().build();
 	}
