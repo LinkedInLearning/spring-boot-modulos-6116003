@@ -1,5 +1,6 @@
 package es.dsrroma.school.springboot.integracionbase.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -8,27 +9,31 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 public class Persona {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@NonNull
 	private Long id;
-	
+
 	@Column(unique = true)
+	@NonNull
 	private String numeroEmpleado;
-	
+	@NonNull
 	private String nombre;
+	@NonNull
 	private String apellidos;
-	
-    @ManyToMany(mappedBy = "participantes")
-    private Set<Reunion> reuniones;
+
+	@ManyToMany(mappedBy = "participantes")
+	private Set<Reunion> reuniones = new HashSet<Reunion>();
 
 }

@@ -21,7 +21,11 @@ class SecurityConfig {
 				.requestMatchers(
 	                    "/v3/api-docs/**",
 	                    "/swagger-ui/**",
-	                    "/swagger-ui.html","/reuniones/**").authenticated())
+	                    "/swagger-ui.html",
+	                    "/reuniones/**",
+	                    "/actas/**",
+	                    "/personas/**",
+	                    "/salas/**").authenticated())
 				.httpBasic(Customizer.withDefaults())
 				.csrf(csrf -> csrf.disable());
 		return http.build();
