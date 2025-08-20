@@ -8,5 +8,5 @@ import es.dsrroma.school.springboot.integracionbase.models.Sala;
 
 public interface SalaRepository extends JpaRepository<Sala, String> {
 	Set<Sala> findByCapacidadGreaterThanEqual(int num);
-	Set<Sala> findByCapadidadBetween(int min, int max);
+	Set<Sala> findByCapacidadBetween(int min, int max);
 }

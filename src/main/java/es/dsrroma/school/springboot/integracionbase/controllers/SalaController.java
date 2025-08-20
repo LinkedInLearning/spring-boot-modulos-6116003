@@ -102,7 +102,7 @@ public class SalaController {
 	
 	@GetMapping("/adecuada/{num}")
 	private ResponseEntity<Iterable<SalaDTO>> findAdecuadas(int num) {
-		Iterable<Sala> salas = salaRepository.findByCapadidadBetween(num, num * 2);
+		Iterable<Sala> salas = salaRepository.findByCapacidadBetween(num, num * 2);
 
 		List<SalaDTO> dtos = StreamSupport.stream(salas.spliterator(), false)
 				.map(SalaMapper::toDTO)
