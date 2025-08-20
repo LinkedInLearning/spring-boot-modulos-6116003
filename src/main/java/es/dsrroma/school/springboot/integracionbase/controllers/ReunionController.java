@@ -87,6 +87,14 @@ public class ReunionController {
 		return ResponseEntity.ok(dtos);
 	}
 
+	@GetMapping("/page2")
+	private ResponseEntity<List<ReunionDTO>> findAll2(Pageable pageable) {
+		Page<Reunion> page = reunionRepository.findAll(pageable);
+		List<ReunionDTO> dtos = page.getContent().stream().map(ReunionMapper::toDTO).collect(Collectors.toList());
+
+		return ResponseEntity.ok(dtos);
+	}
+	
 	@PostMapping
 	private ResponseEntity<Void> createReunion(@Valid @RequestBody ReunionDTO newReunionRequest, 
 			UriComponentsBuilder ucb) {
