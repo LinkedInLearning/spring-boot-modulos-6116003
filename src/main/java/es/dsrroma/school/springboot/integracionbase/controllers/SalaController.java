@@ -110,4 +110,15 @@ public class SalaController {
 
 		return ResponseEntity.ok(dtos);
 	}
+	
+	@GetMapping("/aulas")
+	private ResponseEntity<Iterable<SalaDTO>> findAulas() {
+		Iterable<Sala> salas = salaRepository.encontrarAulas();
+
+		List<SalaDTO> dtos = StreamSupport.stream(salas.spliterator(), false)
+				.map(SalaMapper::toDTO)
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok(dtos);
+	}
 }
