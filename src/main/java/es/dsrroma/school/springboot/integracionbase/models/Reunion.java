@@ -3,6 +3,8 @@ package es.dsrroma.school.springboot.integracionbase.models;
 import java.time.Instant;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +39,7 @@ public class Reunion {
 	private Acta acta;
 
     @ManyToMany
+    @JsonIgnore
     private Set<Persona> participantes;
 
 }
