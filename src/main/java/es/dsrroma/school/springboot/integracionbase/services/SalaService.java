@@ -8,6 +8,7 @@ import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Service;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.SalaDTO;
+import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 import es.dsrroma.school.springboot.integracionbase.mappers.SalaMapper;
 import es.dsrroma.school.springboot.integracionbase.models.Sala;
 import es.dsrroma.school.springboot.integracionbase.repositories.SalaRepository;
@@ -21,9 +22,10 @@ public class SalaService {
 		this.salaRepository = salaRepository;
 	}
 
-	public SalaDTO findSalaById(String requestedId) {
+	public SalaDTO findSalaById(String requestedId) throws EntityNotFoundException {
 		Optional<Sala> salaOpt = salaRepository.findById(requestedId);
-		return salaOpt.map(SalaMapper::toDTO).orElse(null);
+		return salaOpt.map(SalaMapper::toDTO).orElseThrow(() 
+				-> new EntityNotFoundException("Sala", requestedId));
 	}
 
 	public List<SalaDTO> findAllSalas() {
@@ -38,24 +40,21 @@ public class SalaService {
 		return SalaMapper.toDTO(savedSala);
 	}
 
-	public SalaDTO updateSala(String requestedId, SalaDTO salaUpdate) {
-		Optional<Sala> salaOpt = salaRepository.findById(requestedId);
-		if (salaOpt.isPresent()) {
-			Sala updatedSala = salaOpt.get();
-			updatedSala.setDescripcion(salaUpdate.getDescripcion());
-			updatedSala.setCapacidad(salaUpdate.getCapacidad());
-			Sala savedSala = salaRepository.save(updatedSala);
-			return SalaMapper.toDTO(savedSala);
-		}
-		return null;
+	public SalaDTO updateSala(String requestedId, SalaDTO salaUpdate) 
+			throws EntityNotFoundException {
+		Sala updatedSala = salaRepository.findById(requestedId)
+				.orElseThrow(() -> new EntityNotFoundException("Sala", requestedId));
+		updatedSala.setDescripcion(salaUpdate.getDescripcion());
+		updatedSala.setCapacidad(salaUpdate.getCapacidad());
+		Sala savedSala = salaRepository.save(updatedSala);
+		return SalaMapper.toDTO(savedSala);
 	}
 
-	public boolean deleteSala(String id) {
-		if (salaRepository.existsById(id)) {
-			salaRepository.deleteById(id);
-			return true;
+	public void deleteSala(String id) throws EntityNotFoundException {
+		if (!salaRepository.existsById(id)) {
+			throw new EntityNotFoundException("Sala", id);
 		}
-		return false;
+		salaRepository.deleteById(id);
 	}
 
 	public List<SalaDTO> findSalasWithCapacityGreaterThanEqual(int num) {

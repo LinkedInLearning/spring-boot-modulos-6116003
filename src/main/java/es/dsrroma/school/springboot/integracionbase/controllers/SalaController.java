@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.SalaDTO;
+import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 import es.dsrroma.school.springboot.integracionbase.services.SalaService;
 import jakarta.validation.Valid;
 
@@ -29,13 +30,10 @@ public class SalaController {
 	}
 
 	@GetMapping("/{requestedId}")
-	private ResponseEntity<SalaDTO> findById(@PathVariable String requestedId) {
+	private ResponseEntity<SalaDTO> findById(@PathVariable String requestedId) 
+			throws EntityNotFoundException {
 		SalaDTO salaDTO = salaService.findSalaById(requestedId);
-		if (salaDTO != null) {
-			return ResponseEntity.ok(salaDTO);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok(salaDTO);
 	}
 
 	@GetMapping
@@ -54,20 +52,14 @@ public class SalaController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putSala(@PathVariable String requestedId, 
-			@Valid @RequestBody SalaDTO salaUpdate) {
-		SalaDTO updatedSala = salaService.updateSala(requestedId, salaUpdate);
-		if (updatedSala != null) {
-			return ResponseEntity.noContent().build();
-		}
+			@Valid @RequestBody SalaDTO salaUpdate) throws EntityNotFoundException {
+		salaService.updateSala(requestedId, salaUpdate);
 		return ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
-	private ResponseEntity<Void> deleteSala(@PathVariable String id) {
-		boolean deleted = salaService.deleteSala(id);
-		if (deleted) {
-			return ResponseEntity.noContent().build();
-		}
+	private ResponseEntity<Void> deleteSala(@PathVariable String id) throws EntityNotFoundException {
+		salaService.deleteSala(id);
 		return ResponseEntity.notFound().build();
 	}
 

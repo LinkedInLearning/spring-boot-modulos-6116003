@@ -1,8 +1,7 @@
 package es.dsrroma.school.springboot.integracionbase.services;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.ActaDTO;
 import es.dsrroma.school.springboot.integracionbase.dtos.ReunionDTO;
+import es.dsrroma.school.springboot.integracionbase.exceptions.EntityNotFoundException;
 import es.dsrroma.school.springboot.integracionbase.mappers.ReunionMapper;
 import es.dsrroma.school.springboot.integracionbase.models.Acta;
 import es.dsrroma.school.springboot.integracionbase.models.Persona;
@@ -40,9 +40,10 @@ public class ReunionService {
 		this.actaRepository = actaRepository;
 	}
 
-	public ReunionDTO findReunionById(Long requestedId) {
-		Optional<Reunion> reunionOpt = reunionRepository.findById(requestedId);
-		return reunionOpt.map(ReunionMapper::toDTO).orElse(null);
+	public ReunionDTO findReunionById(Long requestedId) throws EntityNotFoundException {
+		Reunion reunion = reunionRepository.findById(requestedId)
+				.orElseThrow(() -> new EntityNotFoundException("Reunion", requestedId));
+		return ReunionMapper.toDTO(reunion);
 	}
 
 	public List<ReunionDTO> findAllReuniones() {
@@ -53,8 +54,9 @@ public class ReunionService {
 
 	public List<ReunionDTO> findAllReuniones(Pageable pageable) {
 		Iterable<Reunion> reuniones = reunionRepository.findAll(
-				PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), 
-						pageable.getSortOr(Sort.by(Sort.Direction.ASC, "fecha"))));
+				PageRequest.of(pageable.getPageNumber(),
+						pageable.getPageSize(), pageable.getSortOr(
+								Sort.by(Sort.Direction.ASC, "fecha"))));
 		return StreamSupport.stream(reuniones.spliterator(), false)
 				.map(ReunionMapper::toDTO).collect(Collectors.toList());
 	}
@@ -65,24 +67,22 @@ public class ReunionService {
 				.map(ReunionMapper::toDTO).collect(Collectors.toList());
 	}
 
-	public ReunionDTO createReunion(ReunionDTO newReunionRequest) {
+	public ReunionDTO createReunion(ReunionDTO newReunionRequest) throws EntityNotFoundException {
 		Reunion reunion = ReunionMapper.toEntity(newReunionRequest);
 
 		// Cargar Acta
 		if (newReunionRequest.getActaId() != null) {
-			Acta acta = actaRepository.findById(newReunionRequest.getActaId()).orElse(null);
-			if (acta == null) {
-				return null;
-			}
+			Acta acta = actaRepository.findById(newReunionRequest.getActaId())
+					.orElseThrow(() -> new EntityNotFoundException("Acta", 
+							newReunionRequest.getActaId()));
 			reunion.setActa(acta);
 		}
 
 		// Cargar Sala
 		if (newReunionRequest.getSalaId() != null) {
-			Sala sala = salaRepository.findById(newReunionRequest.getSalaId()).orElse(null);
-			if (sala == null) {
-				return null;
-			}
+			Sala sala = salaRepository.findById(newReunionRequest.getSalaId())
+					.orElseThrow(() -> new EntityNotFoundException("Sala", 
+							newReunionRequest.getSalaId()));
 			reunion.setSala(sala);
 		}
 
@@ -90,115 +90,90 @@ public class ReunionService {
 		reunion = reunionRepository.save(reunion);
 
 		// Cargar Participantes
-		if (newReunionRequest.getParticipantesIds() != null && 
-				!newReunionRequest.getParticipantesIds().isEmpty()) {
-			Set<Persona> participantes = newReunionRequest.getParticipantesIds().stream()
-					.map(personaId -> personaRepository.findById(personaId).orElse(null))
-					.filter(Objects::nonNull)
-					.collect(Collectors.toSet());
-
-			if (participantes.size() != newReunionRequest.getParticipantesIds().size()) {
-				// si hay menos participantes de los esperados, no devolvemos reunión, para
-				// luego dar el 404
-				return null;
-			}
-			reunion.setParticipantes(participantes);
-		}
+		Set<Persona> participantes = preparaParticipantes(newReunionRequest.getParticipantesIds());
+		reunion.setParticipantes(participantes);
 
 		reunionRepository.save(reunion);
 
 		return ReunionMapper.toDTO(reunion);
 	}
 
-	public ReunionDTO updateReunion(Long requestedId, ReunionDTO reunionUpdate) {
-		Optional<Reunion> reunionOpt = reunionRepository.findById(requestedId);
-		if (reunionOpt.isPresent()) {
-			Reunion reunion = reunionOpt.get();
-			reunion.setAsunto(reunionUpdate.getAsunto());
-			reunion.setFecha(reunionUpdate.getFecha());
-			reunionRepository.save(reunion);
-			return ReunionMapper.toDTO(reunion);
-		}
-		return null;
-	}
+	public ReunionDTO updateReunion(Long requestedId, ReunionDTO reunionUpdate) 
+			throws EntityNotFoundException {
+		Reunion reunion = reunionRepository.findById(requestedId)
+				.orElseThrow(() -> new EntityNotFoundException("Reunion", requestedId));
 
-	public boolean deleteReunion(Long id) {
-		if (reunionRepository.existsById(id)) {
-			reunionRepository.deleteById(id);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean addSalaToReunion(Long reunionId, String salaId) {
-		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
-		if (reunionOpt.isEmpty()) {
-			return false;
-		}
-
-		Reunion reunion = reunionOpt.get();
-
-		Sala sala = salaRepository.findById(salaId).orElse(null);
-		if (sala == null) {
-			return false;
-		}
-		reunion.setSala(sala);
-
+		reunion.setAsunto(reunionUpdate.getAsunto());
+		reunion.setFecha(reunionUpdate.getFecha());
 		reunionRepository.save(reunion);
-		return true;
+
+		return ReunionMapper.toDTO(reunion);
 	}
 
-	public boolean addActaToReunion(Long reunionId, ActaDTO actaRequest) {
-		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
-
-		if (reunionOpt.isEmpty()) {
-			return false;
+	public void deleteReunion(Long id) throws EntityNotFoundException {
+		if (!reunionRepository.existsById(id)) {
+			throw new EntityNotFoundException("Reunion", id);
 		}
+		reunionRepository.deleteById(id);
+	}
 
-		Reunion reunion = reunionOpt.get();
+	public void addSalaToReunion(Long reunionId, String salaId) throws EntityNotFoundException {
+		Reunion reunion = reunionRepository.findById(reunionId)
+				.orElseThrow(() -> new EntityNotFoundException("Reunion", reunionId));
+
+		Sala sala = salaRepository.findById(salaId).orElseThrow(() 
+				-> new EntityNotFoundException("Sala", salaId));
+
+		reunion.setSala(sala);
+		reunionRepository.save(reunion);
+	}
+
+	public void addActaToReunion(Long reunionId, ActaDTO actaRequest) 
+			throws EntityNotFoundException {
+		Reunion reunion = reunionRepository.findById(reunionId)
+				.orElseThrow(() -> new EntityNotFoundException("Reunion", reunionId));
 
 		Acta acta;
-
 		if (actaRequest.getId() != null) {
-			acta = actaRepository.findById(actaRequest.getId()).orElse(null);
-			if (acta == null) {
-				return false;
-			}
-		} else { // acta nueva
+			acta = actaRepository.findById(actaRequest.getId())
+					.orElseThrow(() -> new EntityNotFoundException("Acta", actaRequest.getId()));
+		} else {
 			acta = new Acta();
 			acta.setContenido(actaRequest.getContenido());
 		}
-		acta = actaRepository.save(acta);
 
+		acta = actaRepository.save(acta);
 		reunion.setActa(acta);
 
 		reunionRepository.save(reunion);
-
-		return true;
 	}
 
-	public boolean addParticipantes(Long reunionId, Set<Long> participantesIds) {
-		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
+	public void addParticipantes(Long reunionId, Set<Long> participantesIds) 
+			throws EntityNotFoundException {
+		Reunion reunion = reunionRepository.findById(reunionId)
+				.orElseThrow(() -> new EntityNotFoundException("Reunion", reunionId));
 
-		if (reunionOpt.isEmpty()) {
-			return false;
-		}
-
-		Reunion reunion = reunionOpt.get();
-
-		Set<Persona> participantes = participantesIds.stream()
-				.map(personaId -> personaRepository.findById(personaId).orElse(null))
-				.filter(Objects::nonNull)
-				.collect(Collectors.toSet());
-
-		if (participantes.size() != participantesIds.size()) {
-			return false;
-		}
+		Set<Persona> participantes = preparaParticipantes(participantesIds);
 
 		reunion.getParticipantes().addAll(participantes);
-
 		reunionRepository.save(reunion);
+	}
 
-		return true;
+	private Set<Persona> preparaParticipantes(Set<Long> participantesIds) 
+			throws EntityNotFoundException {
+		final List<Long> idsFallidos = new ArrayList<>();
+		Set<Persona> participantes = participantesIds.stream().map(personaId -> {
+			return personaRepository.findById(personaId).orElseGet(() -> {
+				// si no encontramos alguna persona, lo anotamos
+				idsFallidos.add(personaId);
+				return null;
+			});
+		}).collect(Collectors.toSet());
+
+		if (!idsFallidos.isEmpty()) {
+			// si no se encontraron todas las personas, indicamos cuales faltaron
+			throw new EntityNotFoundException("Persona", idsFallidos);
+		}
+		return participantes;
 	}
 }
