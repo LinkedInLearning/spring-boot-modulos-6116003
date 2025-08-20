@@ -3,6 +3,8 @@ package es.dsrroma.school.springboot.integracionbase.models;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +36,7 @@ public class Persona {
 	private String apellidos;
 
 	@ManyToMany(mappedBy = "participantes")
+	@JsonManagedReference
 	private Set<Reunion> reuniones = new HashSet<Reunion>();
 
 }
