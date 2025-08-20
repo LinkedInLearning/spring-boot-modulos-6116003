@@ -38,12 +38,12 @@ class ReunionJsonTest {
 
     @BeforeEach
     void setUp() {
-    	reunion = new Reunion(ID_NAVIDAD, ASUNTO_NAVIDAD, FECHA_NAVIDAD);
+    	reunion = new Reunion(ID_NAVIDAD, ASUNTO_NAVIDAD, FECHA_NAVIDAD, null, null, null);
     	
         reuniones = Arrays.array(
-                new Reunion(ID_NAVIDAD, ASUNTO_NAVIDAD, null),
-                new Reunion(ID_AYER, ASUNTO_AYER, null),
-                new Reunion(ID_MANANA, ASUNTO_MANANA, null));
+                new Reunion(ID_NAVIDAD, ASUNTO_NAVIDAD, null, null, null, null),
+                new Reunion(ID_AYER, ASUNTO_AYER, null, null, null, null),
+                new Reunion(ID_MANANA, ASUNTO_MANANA, null, null, null, null));
     }
 
     @Test

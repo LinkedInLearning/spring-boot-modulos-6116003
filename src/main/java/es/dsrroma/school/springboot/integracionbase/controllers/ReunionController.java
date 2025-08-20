@@ -137,7 +137,7 @@ public class ReunionController {
 		Optional<Reunion> reunion = reunionRepository.findById(requestedId);
 		if (reunion.isPresent()) {
 			Reunion updatedReunion = new Reunion(reunion.get().getId(), reunionUpdate.getAsunto(),
-					reunionUpdate.getFecha());
+					reunionUpdate.getFecha(), null, null, null);
 
 			reunionRepository.save(updatedReunion);
 			return ResponseEntity.noContent().build();

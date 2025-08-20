@@ -73,7 +73,8 @@ public class PersonaController {
 					persona.get().getId(), 
 					personaUpdate.getNumeroEmpleado(),
 					personaUpdate.getNombre(), 
-					personaUpdate.getApellidos());
+					personaUpdate.getApellidos(),
+					null);
 			personaRepository.save(updatedPersona);
 			return ResponseEntity.noContent().build();
 		} else {

@@ -66,7 +66,7 @@ class ReunionApplicationTests {
     @Test
     @DirtiesContext
     void testCrearNueva() {
-        Reunion newReunion = new Reunion(ID_NAVIDAD, ASUNTO_NAVIDAD, FECHA_NAVIDAD);
+        Reunion newReunion = new Reunion(ID_NAVIDAD, ASUNTO_NAVIDAD, FECHA_NAVIDAD, null, null, null);
         ResponseEntity<Void> createResponse = restTemplate
                 .withBasicAuth("admin", "abc123")
                 .postForEntity("/reuniones", newReunion, Void.class);
@@ -147,7 +147,7 @@ class ReunionApplicationTests {
     @Test
     @DirtiesContext
     void testActualizacion() {
-        Reunion reunionUpdate = new Reunion(null, NUEVO_ASUNTO, null);
+        Reunion reunionUpdate = new Reunion(null, NUEVO_ASUNTO, null, null, null, null);
         HttpEntity<Reunion> request = new HttpEntity<>(reunionUpdate);
         ResponseEntity<Void> response = restTemplate
                 .withBasicAuth("admin", "abc123")
@@ -167,7 +167,7 @@ class ReunionApplicationTests {
 
     @Test
     void testActualizacionNotFound() {
-        Reunion unknownCard = new Reunion(null, NUEVO_ASUNTO, null);
+        Reunion unknownCard = new Reunion(null, NUEVO_ASUNTO, null, null, null, null);
         HttpEntity<Reunion> request = new HttpEntity<>(unknownCard);
         ResponseEntity<Void> response = restTemplate
                 .withBasicAuth("admin", "abc123")
