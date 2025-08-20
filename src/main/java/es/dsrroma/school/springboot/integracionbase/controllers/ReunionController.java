@@ -34,6 +34,7 @@ import es.dsrroma.school.springboot.integracionbase.repositories.ActaRepository;
 import es.dsrroma.school.springboot.integracionbase.repositories.PersonaRepository;
 import es.dsrroma.school.springboot.integracionbase.repositories.ReunionRepository;
 import es.dsrroma.school.springboot.integracionbase.repositories.SalaRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/reuniones")
@@ -87,7 +88,7 @@ public class ReunionController {
 	}
 
 	@PostMapping
-	private ResponseEntity<Void> createReunion(@RequestBody ReunionDTO newReunionRequest, 
+	private ResponseEntity<Void> createReunion(@Valid @RequestBody ReunionDTO newReunionRequest, 
 			UriComponentsBuilder ucb) {
 		Reunion reunion = ReunionMapper.toEntity(newReunionRequest);
 
@@ -133,7 +134,7 @@ public class ReunionController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putReunion(@PathVariable Long requestedId, 
-			@RequestBody ReunionDTO reunionUpdate) {
+			@Valid @RequestBody ReunionDTO reunionUpdate) {
 		Optional<Reunion> reunion = reunionRepository.findById(requestedId);
 		if (reunion.isPresent()) {
 			Reunion updatedReunion = new Reunion(reunion.get().getId(), reunionUpdate.getAsunto(),
@@ -180,7 +181,7 @@ public class ReunionController {
 
 	@PutMapping("/{reunionId}/acta")
 	public ResponseEntity<Void> addActaToReunion(@PathVariable Long reunionId, 
-			@RequestBody ActaDTO actaRequest) {
+			@Valid @RequestBody ActaDTO actaRequest) {
 		// Buscar la reunión
 		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
 
@@ -220,7 +221,7 @@ public class ReunionController {
 	 */
 	@PutMapping("/{reunionId}/participantes")
 	public ResponseEntity<Void> addParticipantes(@PathVariable Long reunionId,
-			@RequestBody Set<Long> participantesIds) {
+			@Valid @RequestBody Set<Long> participantesIds) {
 		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
 
 		if (reunionOpt.isEmpty()) {

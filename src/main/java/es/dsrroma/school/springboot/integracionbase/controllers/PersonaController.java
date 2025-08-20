@@ -21,6 +21,7 @@ import es.dsrroma.school.springboot.integracionbase.dtos.PersonaDTO;
 import es.dsrroma.school.springboot.integracionbase.mappers.PersonaMapper;
 import es.dsrroma.school.springboot.integracionbase.models.Persona;
 import es.dsrroma.school.springboot.integracionbase.repositories.PersonaRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/personas")
@@ -55,7 +56,7 @@ public class PersonaController {
 	}
 
 	@PostMapping
-	private ResponseEntity<Void> createPersona(@RequestBody PersonaDTO newPersonaRequest, 
+	private ResponseEntity<Void> createPersona(@Valid @RequestBody PersonaDTO newPersonaRequest, 
 			UriComponentsBuilder ucb) {
 		Persona persona = PersonaMapper.toEntity(newPersonaRequest);
 		Persona savedPersona = personaRepository.save(persona);
@@ -66,7 +67,7 @@ public class PersonaController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putPersona(@PathVariable Long requestedId, 
-			@RequestBody PersonaDTO personaUpdate) {
+			@Valid @RequestBody PersonaDTO personaUpdate) {
 		Optional<Persona> persona = personaRepository.findById(requestedId);
 		if (persona.isPresent()) {
 			Persona updatedPersona = new Persona(

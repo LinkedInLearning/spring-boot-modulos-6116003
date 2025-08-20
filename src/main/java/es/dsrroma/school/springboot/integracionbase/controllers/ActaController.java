@@ -1,13 +1,18 @@
 package es.dsrroma.school.springboot.integracionbase.controllers;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +26,7 @@ import es.dsrroma.school.springboot.integracionbase.dtos.ActaDTO;
 import es.dsrroma.school.springboot.integracionbase.mappers.ActaMapper;
 import es.dsrroma.school.springboot.integracionbase.models.Acta;
 import es.dsrroma.school.springboot.integracionbase.repositories.ActaRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/actas")
@@ -55,7 +61,7 @@ public class ActaController {
 	}
 
 	@PostMapping
-	private ResponseEntity<Void> createActa(@RequestBody ActaDTO newActaRequest, 
+	private ResponseEntity<Void> createActa(@Valid @RequestBody ActaDTO newActaRequest, 
 			UriComponentsBuilder ucb) {
 		Acta acta = ActaMapper.toEntity(newActaRequest);
 		Acta savedActa = actaRepository.save(acta);
@@ -65,7 +71,7 @@ public class ActaController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putActa(@PathVariable Long requestedId, 
-			@RequestBody ActaDTO actaUpdate) {
+			@Valid @RequestBody ActaDTO actaUpdate) {
 		Optional<Acta> acta = actaRepository.findById(requestedId);
 		if (acta.isPresent()) {
 			Acta updatedActa = new Acta(acta.get().getId(), actaUpdate.getContenido());
@@ -85,4 +91,21 @@ public class ActaController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	
+    /** Método para manejar la excepción de validación.
+     * 
+     * @param ex causa del error
+     * @return bad request con el mensaje de error
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<FieldError> errors = ex.getBindingResult().getFieldErrors();
+        
+        Map<String, String> errorMessages = new HashMap<>();
+        for (FieldError error : errors) {
+            errorMessages.put(error.getField(), error.getDefaultMessage());
+        }
+
+        return ResponseEntity.badRequest().body(errorMessages);
+    }
 }

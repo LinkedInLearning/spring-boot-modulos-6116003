@@ -21,6 +21,7 @@ import es.dsrroma.school.springboot.integracionbase.dtos.SalaDTO;
 import es.dsrroma.school.springboot.integracionbase.mappers.SalaMapper;
 import es.dsrroma.school.springboot.integracionbase.models.Sala;
 import es.dsrroma.school.springboot.integracionbase.repositories.SalaRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/salas")
@@ -55,7 +56,7 @@ public class SalaController {
 	}
 
 	@PostMapping
-	private ResponseEntity<Void> createSala(@RequestBody SalaDTO newSalaRequest, 
+	private ResponseEntity<Void> createSala(@Valid @RequestBody SalaDTO newSalaRequest, 
 			UriComponentsBuilder ucb) {
 		Sala sala = SalaMapper.toEntity(newSalaRequest);
 		Sala savedSala = salaRepository.save(sala);
@@ -66,7 +67,7 @@ public class SalaController {
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putSala(@PathVariable String requestedId, 
-			@RequestBody SalaDTO salaUpdate) {
+			@Valid @RequestBody SalaDTO salaUpdate) {
 		Optional<Sala> sala = salaRepository.findById(requestedId);
 		if (sala.isPresent()) {
 			Sala updatedSala = new Sala(sala.get().getId(), salaUpdate.getDescripcion(), 
