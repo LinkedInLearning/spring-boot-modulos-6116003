@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import es.dsrroma.school.springboot.integracionbase.dtos.ActaDTO;
+import es.dsrroma.school.springboot.integracionbase.dtos.ReunionDTO;
+import es.dsrroma.school.springboot.integracionbase.mappers.ReunionMapper;
 import es.dsrroma.school.springboot.integracionbase.models.Acta;
 import es.dsrroma.school.springboot.integracionbase.models.Persona;
 import es.dsrroma.school.springboot.integracionbase.models.Reunion;
@@ -49,44 +53,92 @@ public class ReunionController {
 	}
 
 	@GetMapping("/{requestedId}")
-	private ResponseEntity<Reunion> findById(@PathVariable Long requestedId) {
+	private ResponseEntity<ReunionDTO> findById(@PathVariable Long requestedId) {
 		Optional<Reunion> reunionOpt = reunionRepository.findById(requestedId);
 		if (reunionOpt.isPresent()) {
-			return ResponseEntity.ok(reunionOpt.get());
+			ReunionDTO dto = ReunionMapper.toDTO(reunionOpt.get());
+			return ResponseEntity.ok(dto);
 		} else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 
 	@GetMapping
-	private ResponseEntity<Iterable<Reunion>> findAll() {
-		return ResponseEntity.ok(reunionRepository.findAll());
+	private ResponseEntity<Iterable<ReunionDTO>> findAll() {
+		Iterable<Reunion> reuniones = reunionRepository.findAll();
+
+		List<ReunionDTO> dtos = StreamSupport.stream(reuniones.spliterator(), false)
+				.map(ReunionMapper::toDTO)
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok(dtos);
 	}
 
 	@GetMapping("/page")
-	private ResponseEntity<List<Reunion>> findAll(Pageable pageable) {
+	private ResponseEntity<List<ReunionDTO>> findAll(Pageable pageable) {
 		Page<Reunion> page = reunionRepository.findAll(
 				PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-				pageable.getSortOr(Sort.by(Sort.Direction.ASC, "fecha"))));
-		return ResponseEntity.ok(page.getContent());
+						pageable.getSortOr(Sort.by(Sort.Direction.ASC, "fecha"))));
+		List<ReunionDTO> dtos = page.getContent().stream()
+				.map(ReunionMapper::toDTO)
+				.collect(Collectors.toList());
+
+		return ResponseEntity.ok(dtos);
 	}
 
 	@PostMapping
-	private ResponseEntity<Void> createReunion(@RequestBody Reunion newReunionRequest, 
+	private ResponseEntity<Void> createReunion(@RequestBody ReunionDTO newReunionRequest, 
 			UriComponentsBuilder ucb) {
-		Reunion savedReunion = reunionRepository.save(newReunionRequest);
-		URI locationOfNewReunion = 
-				ucb.path("reuniones/{id}").buildAndExpand(savedReunion.getId()).toUri();
+		Reunion reunion = ReunionMapper.toEntity(newReunionRequest);
+
+		// Cargar Acta y Sala
+		if (newReunionRequest.getActaId() != null) {
+			Acta acta = actaRepository.findById(newReunionRequest.getActaId()).orElse(null);
+			if (acta == null) {
+				return ResponseEntity.notFound().build();
+			}
+			reunion.setActa(acta);
+		}
+
+		// Cargar Sala
+		if (newReunionRequest.getSalaId() != null) {
+			Sala sala = salaRepository.findById(newReunionRequest.getSalaId()).orElse(null);
+			if (sala == null) {
+				return ResponseEntity.notFound().build();
+			}
+			reunion.setSala(sala);
+		}
+
+		// Guardar la reunion para que tenga un id generado
+		reunion = reunionRepository.save(reunion);
+
+		// Cargar Participantes
+		if (newReunionRequest.getParticipantesIds() != null && 
+				!newReunionRequest.getParticipantesIds().isEmpty()) {
+			Set<Persona> participantes = newReunionRequest.getParticipantesIds().stream()
+					.map(personaId -> personaRepository.findById(personaId).orElse(null))
+					.collect(Collectors.toSet());
+			if (participantes.size() != newReunionRequest.getParticipantesIds().size()) { 
+				// si hay menos participantes de los esperados
+				return ResponseEntity.notFound().build();
+			}
+			reunion.setParticipantes(participantes);
+		}
+
+		reunionRepository.save(reunion);
+		URI locationOfNewReunion = ucb.path("reuniones/{id}")
+				.buildAndExpand(reunion.getId()).toUri();
 		return ResponseEntity.created(locationOfNewReunion).build();
 	}
 
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putReunion(@PathVariable Long requestedId, 
-			@RequestBody Reunion reunionUpdate) {
+			@RequestBody ReunionDTO reunionUpdate) {
 		Optional<Reunion> reunion = reunionRepository.findById(requestedId);
 		if (reunion.isPresent()) {
-			Reunion updatedReunion = new Reunion(reunion.get().getId(), 
-					reunionUpdate.getAsunto(), reunionUpdate.getFecha());
+			Reunion updatedReunion = new Reunion(reunion.get().getId(), reunionUpdate.getAsunto(),
+					reunionUpdate.getFecha());
+
 			reunionRepository.save(updatedReunion);
 			return ResponseEntity.noContent().build();
 		} else {
@@ -105,7 +157,7 @@ public class ReunionController {
 	}
 
 	@PutMapping("/{reunionId}/sala/{salaId}")
-	private ResponseEntity<Void> addSalaToReunion(@PathVariable Long reunionId, 
+	public ResponseEntity<Void> addSalaToReunion(@PathVariable Long reunionId, 
 			@PathVariable String salaId) {
 		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
 
@@ -127,14 +179,14 @@ public class ReunionController {
 	}
 
 	@PutMapping("/{reunionId}/acta")
-	private ResponseEntity<Void> addActaToReunion(@PathVariable Long reunionId, 
-			@RequestBody Acta actaRequest) {
+	public ResponseEntity<Void> addActaToReunion(@PathVariable Long reunionId, 
+			@RequestBody ActaDTO actaRequest) {
 		// Buscar la reunión
 		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
 
 		if (reunionOpt.isEmpty()) {
 			// Si no se encuentra la reunión, devolver 404
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.notFound().build(); 
 		}
 
 		Reunion reunion = reunionOpt.get();
@@ -158,7 +210,7 @@ public class ReunionController {
 
 		return ResponseEntity.noContent().build();
 	}
-    
+
 	/**
 	 * Para añadir participantes a una reunión existente.
 	 * 
@@ -167,7 +219,7 @@ public class ReunionController {
 	 * @return
 	 */
 	@PutMapping("/{reunionId}/participantes")
-	private ResponseEntity<Void> addParticipantes(@PathVariable Long reunionId,
+	public ResponseEntity<Void> addParticipantes(@PathVariable Long reunionId,
 			@RequestBody Set<Long> participantesIds) {
 		Optional<Reunion> reunionOpt = reunionRepository.findById(reunionId);
 
@@ -182,7 +234,7 @@ public class ReunionController {
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
 
-		if (participantes.size() != participantesIds.size()) {
+		if (participantes.size() != participantesIds.size()) { 
 			// si hay menos participantes de los esperados
 			return ResponseEntity.notFound().build();
 		}
