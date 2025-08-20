@@ -2,9 +2,6 @@ package es.dsrroma.school.springboot.integracionbase.controllers;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,48 +15,39 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import es.dsrroma.school.springboot.integracionbase.dtos.ActaDTO;
-import es.dsrroma.school.springboot.integracionbase.mappers.ActaMapper;
-import es.dsrroma.school.springboot.integracionbase.models.Acta;
-import es.dsrroma.school.springboot.integracionbase.repositories.ActaRepository;
+import es.dsrroma.school.springboot.integracionbase.services.ActaService;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/actas")
 public class ActaController {
 
-	private final ActaRepository actaRepository;
+	private final ActaService actaService;
 
-	private ActaController(ActaRepository actaRepository) {
-		this.actaRepository = actaRepository;
+	private ActaController(ActaService actaService) {
+		this.actaService = actaService;
 	}
 
 	@GetMapping("/{requestedId}")
 	private ResponseEntity<ActaDTO> findById(@PathVariable Long requestedId) {
-		Optional<Acta> actaOpt = actaRepository.findById(requestedId);
-		if (actaOpt.isPresent()) {
-			ActaDTO dto = ActaMapper.toDTO(actaOpt.get());
-			return ResponseEntity.ok(dto);
+		ActaDTO actaDTO = actaService.findActaById(requestedId);
+		if (actaDTO != null) {
+			return ResponseEntity.ok(actaDTO);
 		} else {
 			return ResponseEntity.notFound().build();
 		}
 	}
 
 	@GetMapping
-	private ResponseEntity<Iterable<ActaDTO>> findAll() {
-		Iterable<Acta> actas = actaRepository.findAll();
-
-		List<ActaDTO> dtos = StreamSupport.stream(actas.spliterator(), false)
-				.map(ActaMapper::toDTO)
-				.collect(Collectors.toList());
-
-		return ResponseEntity.ok(dtos);
+	private ResponseEntity<List<ActaDTO>> findAll() {
+		List<ActaDTO> actas = actaService.findAllActas();
+		return ResponseEntity.ok(actas);
 	}
 
 	@PostMapping
 	private ResponseEntity<Void> createActa(@Valid @RequestBody ActaDTO newActaRequest, 
 			UriComponentsBuilder ucb) {
-		Acta acta = ActaMapper.toEntity(newActaRequest);
-		Acta savedActa = actaRepository.save(acta);
+		ActaDTO savedActa = actaService.createActa(newActaRequest);
 		URI locationOfNewActa = ucb.path("actas/{id}").buildAndExpand(savedActa.getId()).toUri();
 		return ResponseEntity.created(locationOfNewActa).build();
 	}
@@ -67,23 +55,19 @@ public class ActaController {
 	@PutMapping("/{requestedId}")
 	private ResponseEntity<Void> putActa(@PathVariable Long requestedId, 
 			@Valid @RequestBody ActaDTO actaUpdate) {
-		Optional<Acta> acta = actaRepository.findById(requestedId);
-		if (acta.isPresent()) {
-			Acta updatedActa = new Acta(acta.get().getId(), actaUpdate.getContenido());
-			actaRepository.save(updatedActa);
+		ActaDTO updatedActa = actaService.updateActa(requestedId, actaUpdate);
+		if (updatedActa != null) {
 			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.notFound().build();
 		}
+		return ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping("/{id}")
 	private ResponseEntity<Void> deleteActa(@PathVariable Long id) {
-		if (actaRepository.existsById(id)) {
-			actaRepository.deleteById(id);
+		boolean deleted = actaService.deleteActa(id);
+		if (deleted) {
 			return ResponseEntity.noContent().build();
-		} else {
-			return ResponseEntity.notFound().build();
 		}
+		return ResponseEntity.notFound().build();
 	}
 }

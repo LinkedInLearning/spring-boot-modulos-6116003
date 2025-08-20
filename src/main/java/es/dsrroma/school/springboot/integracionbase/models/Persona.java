@@ -3,6 +3,7 @@ package es.dsrroma.school.springboot.integracionbase.models;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +39,7 @@ public class Persona {
 	@NonNull
 	private String apellidos;
 
-	@ManyToMany(mappedBy = "participantes")
+	@ManyToMany(mappedBy = "participantes", cascade = CascadeType.REMOVE) 
+	// cascade para poder borrar las reuniones con participantes
 	private Set<Reunion> reuniones = new HashSet<Reunion>();
 }
