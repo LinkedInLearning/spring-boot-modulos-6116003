@@ -16,7 +16,6 @@ import es.dsrroma.school.springboot.integracionbase.seguridad.jwt.JwtAuthenticat
 @Configuration
 class SecurityConfig {
 
-
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -26,7 +25,7 @@ class SecurityConfig {
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    http
-	        .csrf(csrf -> csrf.disable())
+//	        .csrf(csrf -> csrf.disable())
 	        .sessionManagement(session -> session
 	        	.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 	        )
