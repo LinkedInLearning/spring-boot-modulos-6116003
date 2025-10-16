@@ -34,7 +34,7 @@ Cliente BBDD
 Echa un vistazo a mis otros cursos en [LinkedIn Learning](https://www.linkedin.com/learning/instructors/mariona-nadal).
 
 [0]: # (Replace these placeholder URLs with actual course URLs)
-[lil-course-url]: https://www.linkedin.com
+[lil-course-url]: https://www.linkedin.com/learning/springboot-integracion-de-modulos/integracion-de-modulos-spring-para-proyectos-profesionales
 [lil-thumbnail-url]: https://media.licdn.com/dms/image/v2/D4E0DAQGFgQzFWQTKxw/learning-public-crop_675_1200/B4EZmHqAkpHgAY-/0/1758917561383?e=2147483647&v=beta&t=b8D17cOH1fNBbiAs8T42uhdGKItY7RMEtr8GH40dtw0
 
 [1]: # (End of ES-Instruction ###############################################################################################)
