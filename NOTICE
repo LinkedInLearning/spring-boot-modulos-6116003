@@ -5,7 +5,103 @@ Licensed under the LinkedIn Learning Exercise File License (the "License").
 See LICENSE in the project root for license information.
 
 ATTRIBUTIONS:
-[PLEASE PROVIDE ATTRIBUTIONS OR DELETE THIS AND THE ABOVE LINE “ATTRIBUTIONS”]
+
+org.projectlombok:lombok
+[https://github.com/projectlombok/lombok](https://github.com/projectlombok/lombok)
+License: MIT
+[https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
+--------------------------------------------------------------------------
+
+com.mysql:mysql-connector-j
+[https://github.com/mysql/mysql-connector-j](https://github.com/mysql/mysql-connector-j)
+License: GPL-2.0 with FOSS Exception
+[https://www.gnu.org/licenses/old-licenses/gpl-2.0.html](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+----------------------------------------------------------------------------------------------------------------
+
+org.springframework.boot:spring-boot-starter-test
+[https://github.com/spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.springframework.boot:spring-boot-starter-security
+[https://github.com/spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.mockito:mockito-core
+[https://github.com/mockito/mockito](https://github.com/mockito/mockito)
+License: MIT
+[https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
+--------------------------------------------------------------------------
+
+org.springframework.boot:spring-boot-maven-plugin
+[https://github.com/spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.springframework.boot:spring-boot-starter-data-jpa
+[https://github.com/spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.springframework.boot:spring-boot-starter-web
+[https://github.com/spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.postgresql:postgresql
+[https://github.com/pgjdbc/pgjdbc](https://github.com/pgjdbc/pgjdbc)
+License: BSD-2-Clause
+[https://opensource.org/licenses/BSD-2-Clause](https://opensource.org/licenses/BSD-2-Clause)
+--------------------------------------------------------------------------------------------
+
+org.springframework.boot:spring-boot-starter-oauth2-client
+[https://github.com/spring-projects/spring-boot](https://github.com/spring-projects/spring-boot)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.springdoc:springdoc-openapi-starter-webmvc-ui
+[https://github.com/springdoc/springdoc-openapi](https://github.com/springdoc/springdoc-openapi)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.hibernate.validator:hibernate-validator
+[https://github.com/hibernate/hibernate-validator](https://github.com/hibernate/hibernate-validator)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.apache.maven.plugins:maven-compiler-plugin
+[https://github.com/apache/maven-compiler-plugin](https://github.com/apache/maven-compiler-plugin)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+org.xerial:sqlite-jdbc
+[https://github.com/xerial/sqlite-jdbc](https://github.com/xerial/sqlite-jdbc)
+License: Apache 2.0
+[http://www.apache.org/licenses/](http://www.apache.org/licenses/)
+------------------------------------------------------------------
+
+com.h2database:h2
+[https://github.com/h2database/h2database](https://github.com/h2database/h2database)
+License: MPL-2.0 or EPL-1.0 dual license
+[https://www.mozilla.org/en-US/MPL/2.0/](https://www.mozilla.org/en-US/MPL/2.0/)
+--------------------------------------------------------------------------------
+
+org.hibernate.orm:hibernate-community-dialects
+[https://github.com/hibernate/hibernate-orm](https://github.com/hibernate/hibernate-orm)
+License: LGPL-2.1
+[https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
+------------------------------------------------------------------------------------------------------------------
+
 
 Please note, this project may automatically load third party code from external 
 repositories (for example, NPM modules, Composer packages, or other dependencies). 
